@@ -1,1 +1,1 @@
-from .shell import run
+from .shell import run, exists, package_installed

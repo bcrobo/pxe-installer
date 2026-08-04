@@ -18,6 +18,27 @@ def run(cmd, check=True):
 
     return result
 
+def exists(cmd):
+    result = subprocess.run(
+        cmd,
+        text=True,
+        capture_output=True,
+    )
+    return result.returncode == 0
+
+def package_installed(package):
+    result = run(
+        ["dpkg-query", "-W", "-f=${Status}", package],
+        check=False,
+    )
+
+    return (
+        result.returncode == 0
+        and result.stdout.startswith("install ok installed")
+    )
+
+Then your task is clearer:
+
 def chroot_run(root, *args, env=None):
     cmd = ["chroot", root]
 

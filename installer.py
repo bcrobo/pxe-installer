@@ -15,12 +15,13 @@ if __name__ == "__main__":
         sys.exit(1)
 
     tasks = [
-        #UpdateRepo(),
-        OpenSSHServerInstall()
+        UpdateRepo(),
+        OpenSSHServerInstall(),
+        DisableAutoMounting()
     ]
 
     for task in tasks:
-        logger.info(f"[Task: {task.name}]")
+        logger.info(f"[Task: {task.name}...]")
         if task.check():
             logger.info(f"[Task: {task.name} ✓]")
             continue
@@ -28,4 +29,5 @@ if __name__ == "__main__":
         if not task.execute():
             logger.error(f"[Task: {task.name} ×]")
             break
+        logger.info(f"[Task: {task.name} ✓]")
 
