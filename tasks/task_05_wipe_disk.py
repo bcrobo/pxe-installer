@@ -1,3 +1,5 @@
+from shell import run
+
 class WipeDisk(Task):
 
     def __init__(self, disk):

@@ -1,3 +1,5 @@
+from shell import run, exists
+
 class PartitionDisk(Task):
 
     def __init__(self, disk):

@@ -1,3 +1,5 @@
+from shell import run, exists
+
 class CreateBootPool(Task):
     name = "Create ZFS boot pool"
 
