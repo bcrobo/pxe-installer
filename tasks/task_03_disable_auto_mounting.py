@@ -1,34 +1,42 @@
-import logging
-from tasks import Task
-from shell import run
+from shell import run_output
+from tasks.task import Task
 
-logger = logging.getLogger(__name__)
 
 class DisableAutoMounting(Task):
     name = "Disable automounting"
 
     def check(self):
-        result = run(
+        value = run_output(
             [
                 "gsettings",
                 "get",
                 "org.gnome.desktop.media-handling",
                 "automount",
-            ],
-            check=False,
+            ]
         )
-
-        return (
-            result.returncode == 0
-            and result.stdout.strip() == "false"
-        )
+        if value is None:
+            return True
+        return value == "false"
 
     def execute(self):
-        return run([
-            "gsettings",
-            "set",
-            "org.gnome.desktop.media-handling",
-            "automount",
-            "false",
-        ])
+        value = run_output(
+            [
+                "gsettings",
+                "get",
+                "org.gnome.desktop.media-handling",
+                "automount",
+            ]
+        )
+        if value is None:
+            return True
+        from shell import run
 
+        return run(
+            [
+                "gsettings",
+                "set",
+                "org.gnome.desktop.media-handling",
+                "automount",
+                "false",
+            ]
+        )

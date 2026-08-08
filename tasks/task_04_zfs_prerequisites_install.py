@@ -1,31 +1,20 @@
-import logging
-from tasks import Task
-from shell import run, package_installed
+from shell import package_installed, run
+from tasks.task import Task
 
-logger = logging.getLogger(__name__)
 
 class ZfsPrerequisitesInstall(Task):
-    name = "Install zfs in the LiveCD environment"
+    name = "Install ZFS prerequisites in the live environment"
     packages = [
         "linux-headers-generic",
         "debootstrap",
         "gdisk",
         "zfsutils-linux",
+        "cryptsetup",
+        "dosfstools",
     ]
 
     def check(self):
-        return all(
-            package_installed(package)
-            for package in self.packages
-        )
+        return all(package_installed(package) for package in self.packages)
 
     def execute(self):
-        # Install missing prerequisites in zfsutils-linux package
-        # See: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1091428
-        return run([
-            "apt",
-            "install",
-            "--yes",
-            *self.packages,
-        ])
-
+        return run(["apt", "install", "--yes", *self.packages])

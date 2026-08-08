@@ -3,16 +3,19 @@ from shell import exists, run
 from tasks.task import Task
 
 
-class CreateBootPool(Task):
+class CreateRootPool(Task):
     def __init__(self, config: InstallConfig):
         self.config = config
-        self.name = "Create mirrored ZFS boot pool"
+        self.name = "Create mirrored ZFS root pool on LUKS"
 
     def check(self):
-        return exists(["zpool", "list", "bpool"])
+        return exists(["zpool", "list", "rpool"])
 
     def execute(self):
-        boot_partitions = [self.config.boot_partition(disk) for disk in self.config.disks]
+        luks_devices = [
+            self.config.luks_mapper_path(index)
+            for index in range(1, len(self.config.disks) + 1)
+        ]
         cmd = [
             "zpool",
             "create",
@@ -20,16 +23,12 @@ class CreateBootPool(Task):
             "ashift=12",
             "-o",
             "autotrim=on",
-            "-o",
-            "compatibility=grub2",
-            "-o",
-            "cachefile=/etc/zfs/zpool.cache",
-            "-O",
-            "devices=off",
             "-O",
             "acltype=posixacl",
             "-O",
             "xattr=sa",
+            "-O",
+            "dnodesize=auto",
             "-O",
             "compression=lz4",
             "-O",
@@ -39,13 +38,13 @@ class CreateBootPool(Task):
             "-O",
             "canmount=off",
             "-O",
-            "mountpoint=/boot",
+            "mountpoint=/",
             "-R",
             self.config.root_mount,
-            "bpool",
+            "rpool",
         ]
-        if len(boot_partitions) > 1:
-            cmd.extend(["mirror", *boot_partitions])
+        if len(luks_devices) > 1:
+            cmd.extend(["mirror", *luks_devices])
         else:
-            cmd.extend(boot_partitions)
+            cmd.extend(luks_devices)
         return run(cmd)

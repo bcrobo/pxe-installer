@@ -1,6 +1,5 @@
 import logging
 
-import logging
 
 def configure(level=logging.INFO):
     logging.basicConfig(
@@ -8,7 +7,7 @@ def configure(level=logging.INFO):
         format="%(asctime)s %(levelname)s [%(name)s] %(message)s",
         handlers=[
             logging.StreamHandler(),
-            logging.FileHandler("app.log"),
+            logging.FileHandler("install.log"),
         ],
-        force=True,  # Optional, useful if something already configured logging
+        force=True,
     )
