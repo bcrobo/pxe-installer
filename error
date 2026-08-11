@@ -1,0 +1,5 @@
+2026-08-11 22:49:36,854 ERROR [shell.shell] Command failed: zpool create -o ashift=12 -o autotrim=on -o compatibility=grub2 -o cachefile=/etc/zfs/zpool.cache -O devices=off -O acltype=posixacl -O xattr=sa -O compression=lz4 -O normalization=formD -O relatime=on -O canmount=off -O mountpoint=/boot -R /mnt bpool mirror /dev/disk/by-id/ata-VBOX_HARDDISK_VB1e6ee791-b2c08e26-part2 /dev/disk/by-id/ata-VBOX_HARDDISK_VBa6d58907-499ba37c-part2
+2026-08-11 22:49:36,854 ERROR [shell.shell] The ZFS modules cannot be auto-loaded.
+Try running 'modprobe zfs' as root to manually load them.
+2026-08-11 22:49:36,854 ERROR [__main__] [Task: Create mirrored ZFS boot pool] failed
+
