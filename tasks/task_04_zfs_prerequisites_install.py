@@ -17,4 +17,4 @@ class ZfsPrerequisitesInstall(Task):
         return all(package_installed(package) for package in self.packages)
 
     def execute(self):
-        return run(["apt", "install", "--yes", *self.packages])
+        return run(["DEBIAN_FRONTEND=noninteractive", "apt", "install", "--yes", *self.packages])
