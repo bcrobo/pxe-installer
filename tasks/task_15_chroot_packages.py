@@ -35,33 +35,61 @@ class ChrootPackages(Task):
 
     def execute(self):
         packages = [
-            "console-setup",
-            "locales",
-            "dpkg-dev",
-            "linux-headers-generic",
-            "linux-image-generic",
-            "zfs-initramfs",
-            "cryptsetup",
-            "cryptsetup-initramfs",
-            "systemd-timesyncd",
-            "grub-efi-amd64",
-            "shim-signed",
-            "openssh-server",
-            *self.config.firmware_packages,
-        ]
-        return (
-            chroot_run(self.config.root_mount, "apt", "update")
-            and chroot_run(
-                self.config.root_mount,
-                "apt",
-                "install",
-                "--yes",
-                *packages,
-            )
-            and chroot_run(
-                self.config.root_mount,
-                "bash",
-                "-c",
-                "grep -q 'en_US.UTF-8 UTF-8' /etc/locale.gen || echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen; locale-gen",
-            )
-        )
+               "console-setup",
+               "locales",
+               "dpkg-dev",
+               "linux-headers-generic",
+               "linux-image-generic",
+               "zfs-initramfs",
+               "cryptsetup",
+               "cryptsetup-initramfs",
+               "systemd-timesyncd",
+               "grub-efi-amd64",
+               "shim-signed",
+               "openssh-server",
+               *self.config.firmware_packages,
+           ]
+        
+           root = self.config.root_mount
+           noninteractive = {"DEBIAN_FRONTEND": "noninteractive"}
+        
+           return (
+               chroot_run(
+                   root,
+                   "apt",
+                   "update",
+               )
+               and chroot_run(
+                   root,
+                   "bash",
+                   "-c",
+                   """
+                   printf '%s\\n' \
+                       'keyboard-configuration keyboard-configuration/modelcode string pc105' \
+                       'keyboard-configuration keyboard-configuration/layoutcode string fr' \
+                       'keyboard-configuration keyboard-configuration/variantcode string' \
+                       'keyboard-configuration keyboard-configuration/optionscode string' \
+                       | debconf-set-selections
+                   """,
+                   env=noninteractive,
+               )
+               and chroot_run(
+                   root,
+                   "apt",
+                   "install",
+                   "--yes",
+                   *packages,
+                   env=noninteractive,
+               )
+               and chroot_run(
+                   root,
+                   "bash",
+                   "-c",
+                   """
+                   printf '%s\\n' 'en_US.UTF-8 UTF-8' > /etc/locale.gen
+                   locale-gen
+                   update-locale LANG=en_US.UTF-8
+                   """,
+                   env=noninteractive,
+               )
+           )
