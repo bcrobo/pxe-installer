@@ -1,0 +1,31 @@
+# Example for MSI MAG B850M Mortar WiFi + Freebox Ultra Essentiel
+# Use: export LUKS_PASSPHRASE='your-passphrase'
+#      python3 install.py --config config.yaml --pre-install
+
+disks:
+  - /dev/disk/by-id/ata-VBOX_HARDDISK_VB1e6ee791-b2c08e26 
+  - /dev/disk/by-id/ata-VBOX_HARDDISK_VBa6d58907-499ba37c
+
+hostname: pve
+domain: home.arpa
+debian_suite: trixie
+root_mount: /mnt
+
+network:
+  # DHCP works out of the box on the Freebox LAN.
+  mode: dhcp
+  # interface: enp5s0
+
+  # For a fixed Proxmox management IP, use static instead:
+  # mode: static
+  # interface: enp5s0
+  # address: 192.168.1.50
+  # gateway: 192.168.1.254
+  # netmask: 255.255.255.0
+
+dropbear:
+  authorized_keys: /root/.ssh/server
+  convert_openssh_keys: true
+
+luks:
+  passphrase_env: toto
